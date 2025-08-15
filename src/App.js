@@ -12,14 +12,14 @@ const FabricPriceApp = () => {
   const x_opt_avg = 32232.698415;
   const z_opt_avg = 999.995000;
   
-  // Y values based on color selection
+  // Y values based on color selection orginal of it is 36108.573
   const getYValue = (selectedColor) => {
     const yValues = {
-      'Trắng': 29384.908,
-      'Lợt': 30131.982,
-      'Trung': 31626.129,
-      'Đậm': 36108.573,
-      'Xám tiêu': 38598.819
+      'Trắng': 33900.209,
+      'Lợt': 34762.079,
+      'Trung': 36485.818,
+      'Đậm': 41657.036,
+      'Xám tiêu': 44529.935
     };
     return yValues[selectedColor] || 29384.908; // Default to 'Trắng' if not found
   };
