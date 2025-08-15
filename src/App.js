@@ -5,12 +5,26 @@ const FabricPriceApp = () => {
   const [gsm, setGsm] = useState(200);
   const [width, setWidth] = useState(175);
   const [composition] = useState('60% Cotton, 40% Polyester');
+  const [color, setColor] = useState('Trắng');
   const [price, setPrice] = useState(null);
   
   // Constants from your formula
   const x_opt_avg = 32232.698415;
-  const y_opt_avg = 36108.573417;
   const z_opt_avg = 999.995000;
+  
+  // Y values based on color selection
+  const getYValue = (selectedColor) => {
+    const yValues = {
+      'Trắng': 29384.908,
+      'Lợt': 30131.982,
+      'Trung': 31626.129,
+      'Đậm': 36108.573,
+      'Xám tiêu': 38598.819
+    };
+    return yValues[selectedColor] || 29384.908; // Default to 'Trắng' if not found
+  };
+  
+  const colorOptions = ['Trắng', 'Lợt', 'Trung', 'Đậm', 'Xám tiêu'];
   
   const calculatePricePerKg = () => {
     if (!price) return 0;
@@ -19,14 +33,15 @@ const FabricPriceApp = () => {
 
   useEffect(() => {
     const calculatePrice = () => {
-      const priceUSD = (((((gsm * width / (1000 * 100)) * y_opt_avg + x_opt_avg) * 1.1 + z_opt_avg) * 1.1 * 1.2) / 23612);
+      const y_value = getYValue(color);
+      const priceUSD = (((((gsm * width / (1000 * 100)) * y_value + x_opt_avg) * 1.1 + z_opt_avg) * 1.1 * 1.2) / 23612);
       const priceVND = priceUSD * 23612;
       return priceVND;
     };
     
     const calculatedPrice = calculatePrice();
     setPrice(calculatedPrice);
-  }, [gsm, width]);
+  }, [gsm, width, color]);
 
   const formatPrice = (value) => {
     return new Intl.NumberFormat('vi-VN', {
@@ -333,6 +348,42 @@ const FabricPriceApp = () => {
               </div>
             </div>
 
+            {/* Color Selection */}
+            <div style={styles.controlGroup}>
+              <div style={styles.label}>
+                <div style={{width: '20px', height: '20px', marginRight: '8px', backgroundColor: '#ff6b6b', borderRadius: '50%'}}></div>
+                Color Selection
+              </div>
+              <div style={styles.compositionBox}>
+                <div style={styles.compositionContent}>
+                  <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))', gap: '8px'}}>
+                    {colorOptions.map((colorOption) => (
+                      <button
+                        key={colorOption}
+                        onClick={() => setColor(colorOption)}
+                        style={{
+                          padding: '8px 12px',
+                          border: color === colorOption ? '2px solid #27ae60' : '1px solid #ddd',
+                          borderRadius: '8px',
+                          backgroundColor: color === colorOption ? '#e8f5e8' : 'white',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          fontWeight: color === colorOption ? 'bold' : 'normal',
+                          color: color === colorOption ? '#27ae60' : '#333',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        {colorOption}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{marginTop: '12px', textAlign: 'center'}}>
+                    <span style={{...styles.compositionText, fontSize: '14px'}}>Selected: {color}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Composition Display */}
             <div style={styles.controlGroup}>
               <div style={styles.label}>
@@ -425,6 +476,10 @@ const FabricPriceApp = () => {
                     <div style={styles.summaryItem}>
                       <span style={styles.summaryLabel}>GSM:</span>
                       <span style={styles.summaryValue}>{gsm}</span>
+                    </div>
+                    <div style={styles.summaryItem}>
+                      <span style={styles.summaryLabel}>Color:</span>
+                      <span style={styles.summaryValue}>{color}</span>
                     </div>
                     <div style={styles.summaryItem}>
                       <span style={styles.summaryLabel}>Width:</span>
